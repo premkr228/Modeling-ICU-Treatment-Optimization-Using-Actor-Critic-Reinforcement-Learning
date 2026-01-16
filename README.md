@@ -1,4 +1,53 @@
 # Modeling ICU Treatment Optimization Using Actor-Critic Reinforcement Learning
+
+Title: Actor-Critic Based Sepsis Treatment Optimization<br>
+
+## Scenario: 
+You are working as a data scientist in a medical AI research team. Your objective is to train a reinforcement learning agent that can suggest optimal treatment strategies for sepsis patients in the ICU. Sepsis is a life-threatening condition, and its management requires timely interventions based on real-time vitals and clinical decisions. ICU patients are monitored continuously, and treatment decisions (actions) are logged over time.<br>
+## Objective
+The goal of this assignment is to model the ICU treatment process using Reinforcement Learning, specifically the Actor-Critic method. The agent should learn an optimal intervention policy from historical ICU data. Each patient's ICU stay is treated as an episode consisting of time-stamped clinical observations and treatments.<br>
+Your tasks:<br>
+&emsp;1. Model the ICU treatment process as a Reinforcement Learning (RL) environment.<br>
+&emsp;2. Train an Actor-Critic agent to suggest medical interventions based on the patient’s current state (vitals and demographics).<br>
+Dataset:<br>
+Use the dataset provided in the following link:
+https://drive.google.com/file/d/1UPsOhUvyrsrC59ilXsvHwGZhzm7Yk01w/view?usp=sharing<br>
+Features:<br>
+&emsp;● Vitals: mean_bp, spo2, resp_rate<br>
+&emsp;● Demographics: age, gender<br>
+&emsp;● Action: Medical intervention (e.g., "Vancomycin", "NaCl 0.9%", or NO_ACTION)<br>
+&emsp;● Identifiers: timestamp, subject_id, hadm_id, icustay_id<br>
+## Environment 
+Setup (RL Formulation)<br>
+State Space<br>
+Each state vector consists of: mean_bp (Mean Blood Pressure) , spo2 (Oxygen Saturation), resp_rate (Respiratory Rate), age, One-hot encoded gender. <br>
+## Action Space
+&emsp;● The agent selects one discrete action from 99 possible medical interventions (e.g., Vancomycin, Fentanyl, PO Intake, etc.<br>
+&emsp;● You should integer encode or one-hot encode these interventions.<br>
+## Reward
+At each time step, the agent receives a reward based on how close the patient's vitals are to clinically normal ranges. The reward encourages the agent to take actions that stabilize the patient's vital signs:<br>
+Rewardt = − ((MBPt −90)2+(SpO2t −98)2+(RRt −16)2)<br>
+## Explanation:
+&emsp;● MBP (mean_bp): Target = 90 mmHg<br>
+&emsp;● SpO₂ (spo2): Target = 98%<br>
+&emsp;● RR (resp_rate): Target = 16 breaths/min<br>
+Each term penalizes the squared deviation from the healthy target. The smaller the difference, the higher (less negative) the reward.<br>
+## Example:
+Suppose at time t, the vitals are:<br>
+&emsp;● MBP = 88<br>
+&emsp;● SpO₂ = 97<br>
+&emsp;● RR = 20<br>
+### Then the reward is:
+Rewardt = − [(88−90)2+(97−98)2+(20−16)2] = − (4+1+16)= −21<br>
+A lower (more negative) reward indicates worse vitals, guiding the agent to learn actions that minimize this penalty.
+## Episode termination
+An episode ends when the ICU stay ends. To define this:<br>
+&emsp;1. Group the data by subject_id, hadm_id, icustay_id → Each group represents one ICU stay = one episode.<br>
+&emsp;2. Sort each group by timestamp → Ensure the time progression is correct.<br>
+&emsp;3. For each time step in a group (i.e., each row). Check if it is the last row in that group. → If yes, then mark done = True (end of episode). → If no, then done = False (continue episode).<br>
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 1. Objective of the Project
 
 The primary objective of this assignment is to model the Intensive Care Unit (ICU) treatment process as a reinforcement learning problem and to learn an optimal medical intervention policy using the Actor-Critic method. Each patient’s ICU stay is treated as a single episode composed of time-stamped clinical observations and administered treatments. The reinforcement learning agent is trained on historical ICU data to recommend medical interventions based on the patient’s current physiological state and demographic information. The ultimate goal is to minimize patient instability by learning a policy that keeps vital signs as close as possible to clinically normal ranges over the duration of the ICU stay.
