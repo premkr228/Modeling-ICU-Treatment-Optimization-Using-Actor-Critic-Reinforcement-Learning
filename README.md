@@ -1,0 +1,2 @@
+# Modeling-ICU-Treatment-Optimization-Using-Actor-Critic-Reinforcement-Learning
+This Project models ICU treatment as a reinforcement learning problem. Using the Actor-Critic method, an agent learns to recommend medical interventions based on patient vitals and demographics. By training on historical data, the goal is to discover an optimal policy that minimizes instability and maintains clinically normal vital signs.
